@@ -1,0 +1,159 @@
+---
+// DynamicReviews.astro
+---
+
+<div id="dynamic-reviews" class="reviews-container">
+  <div class="loading-container text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    <p class="mt-4 text-gray-600">Loading reviews...</p>
+  </div>
+</div>
+
+<script>
+  // Load the reviews on the client side
+  async function loadReviews() {
+    const container = document.getElementById('dynamic-reviews');
+    if (!container) return;
+    
+    try {
+      // Try to load from sessionStorage first
+      let reviewsData;
+      const cached = sessionStorage.getItem('google_reviews_cache');
+      const cachedTime = sessionStorage.getItem('google_reviews_cache_time');
+      
+      if (cached && cachedTime) {
+        const cacheAge = Date.now() - parseInt(cachedTime);
+        if (cacheAge < 3600000) { // 1 hour
+          reviewsData = JSON.parse(cached);
+        }
+      }
+      
+      // If no cached data, fetch from API
+      if (!reviewsData) {
+        const response = await fetch('/api/getGoogleReviews');
+        if (!response.ok) throw new Error('Failed to load reviews');
+        reviewsData = await response.json();
+        
+        // Cache the results
+        sessionStorage.setItem('google_reviews_cache', JSON.stringify(reviewsData));
+        sessionStorage.setItem('google_reviews_cache_time', Date.now().toString());
+      }
+      
+      // Render the reviews
+      renderReviews(container, reviewsData);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      container.innerHTML = `
+        <div class="text-center py-12">
+          <p class="text-green-500">Failed to load reviews. Please try again later.</p>
+          <button id="retry-button" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Retry
+          </button>
+        </div>
+      `;
+      
+      // Add retry functionality
+      document.getElementById('retry-button')?.addEventListener('click', () => {
+        container.innerHTML = '<div class="loading-container text-center py-12"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div><p class="mt-4 text-gray-600">Loading reviews...</p></div>';
+        loadReviews();
+      });
+    }
+  }
+  
+  // Function to render the reviews
+  function renderReviews(container, data) {
+    const { reviews, rating, total } = data;
+    if (!reviews || reviews.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-12">
+          <div class="text-gray-400 mb-4 text-5xl">⭐</div>
+          <p class="text-xl text-gray-600 mb-3">No reviews available</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Limit to 6 reviews
+    const displayReviews = reviews.slice(0, 6);
+    
+    // Create the HTML for the reviews
+    let html = `
+      <div class="text-center mb-8">
+        <div class="flex items-center justify-center mb-3">
+          <div class="text-4xl font-bold text-amber-500">${rating.toFixed(1)}</div>
+          <div class="text-lg text-gray-500 ml-2">out of 5</div>
+        </div>
+        
+        <div class="text-2xl text-amber-500 mb-1">
+          ${Array.from({ length: 5 }).map((_, i) => 
+            `<span class="${i < Math.round(rating) ? "text-amber-500" : "text-gray-300"}">★</span>`
+          ).join('')}
+        </div>
+        
+        <p class="text-gray-600">Based on ${total} reviews</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    `;
+    
+    // Add each review
+    displayReviews.forEach(review => {
+      html += `
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+          <div class="flex items-center mb-4">            
+            <div>
+              <h4 class="font-bold text-gray-900">${review.author}</h4>
+              <p class="text-sm text-gray-500">${review.relativeTime}</p>
+            </div>
+          </div>
+          
+          <div class="text-amber-500 mb-3">
+            ${Array.from({ length: 5 }).map((_, i) => 
+              `<span class="${i < review.rating ? "text-amber-500" : "text-gray-300"}">★</span>`
+            ).join('')}
+          </div>
+          
+          <p class="text-gray-700">${review.text}</p>
+        </div>
+      `;
+    });
+    
+    html += `</div>`;
+    
+    // Add "View more" button if there are more reviews
+    if (reviews.length > 6) {
+      html += `
+        <div class="text-center">
+          <a 
+            href="https://g.page/r/CevuH6bLV8UYEBM/reviews" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors duration-300"
+          >
+            View all ${total} reviews on Google
+          </a>
+        </div>
+      `;
+    }
+    
+    container.innerHTML = html;
+  }
+  
+  // Load reviews when the page is loaded
+  document.addEventListener('DOMContentLoaded', loadReviews);
+</script>
+
+<style>
+  .reviews-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .loading-container {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

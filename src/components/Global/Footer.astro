@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+
+// Get the office hours from the siteInfo collection
+let officeHours;
+try {
+  const siteInfoEntries = await getCollection("siteInfo");
+  officeHours = siteInfoEntries.find(entry => entry.id === "office-hours");
+} catch (error) {
+  // Collection might not exist yet when first setting up the project
+  console.log("Office hours not found or collections not yet available");
+}
+
+// Footer navigation groups
+const footerNavs = [
+  {
+    title: "Links",
+    items: [
+      { text: "Gallery", href: "/gallery/" },
+      { text: "Services", href: "/services/" },
+      { text: "Contact", href: "/contact/" },
+    ],
+  },
+];
+
+// Current year for copyright
+const currentYear = new Date().getFullYear();
+
+// Render office hours content if available
+let OfficeHoursContent = null;
+if (officeHours) {
+  const { Content } = await officeHours.render();
+  OfficeHoursContent = Content;
+}
+---
+
+<footer class="bg-emerald-800 text-white pt-16 pb-4">
+  <div class="container">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <div>
+        <div class="mb-4">
+          <a href="/" class="">
+            <img src="/uploads/greengardenersussex.jpg" alt="The Green Gardeners - Sussex The Green Gardeners - white logo" class="h-28 p-2" />
+          </a>
+        </div>
+        
+          <p class="text-base text-white">Reach out to us for a free quote and let us help you keep your garden looking its best.</p>
+        
+      </div>
+
+      <div class="text-white">
+        <h3 class="text-lg font-bold mb-4 text-white">Lawn Mowing Experts</h3>
+        <p class="text-base">The Green Gardeners provide reliable garden maintenance services across Heathfield, East Sussex, working with both residential and commercial clients. Our experienced team delivers professional lawn mowing, hedge trimming, leaf clearing, and weeding with care, efficiency, and attention to detail.</p>
+        
+      </div>
+      
+      <!-- Navigation Links -->
+      {
+        footerNavs.map((group) => (
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-white">{group.title}</h4>
+            <ul class="space-y-2">
+              {group.items.map((item) => (
+                <li>
+                  <a 
+                    href={item.href} 
+                    class="text-white hover:text-green-100"
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    
+    <!-- Copyright -->
+    <div class="mb-0 pb-0 text-center text-white text-xs">
+      <p class="text-sm">&copy; {currentYear} The Green Gardeners – Garden Maintenance Services in Heathfield, East Sussex – Designed & Hosted by South West Web Design</p>
+    </div>
+  </div>
+</footer>

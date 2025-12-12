@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/getGoogleReviews",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
+    }
+  ]
+}

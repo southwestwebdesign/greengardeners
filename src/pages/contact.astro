@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import Button from "../components/UI/Button.astro";
+import Form from "../components/Global/Form.astro";
+import TwoButtons from "../components/Global/TwoButtons.astro";
+import CustomDivider from "../components/Global/CustomDivider.astro";
+---
+
+<BaseLayout
+  title="The Green Gardeners - Contact Us"
+  description="Get in touch with our team at The Green Gardeners. We are here to assist"
+>
+  <PageHeader 
+    title="Contact Us" 
+    subtitle="We'd love to hear from you"
+    backgroundImage="/uploads/default-bg.webp"
+  />
+  
+  <!-- Contact Information -->
+  <section class="py-16">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+        <!-- Contact Information -->
+        <div>
+          <h2 class="text-3xl font-bold mb-4">Contact Information</h2>
+
+          <CustomDivider />
+
+          <p class="text-lg mt-6 mb-8">
+          The Green Gardeners have built a strong reputation for reliable, high quality garden maintenance in Heathfield, East Sussex.</p>
+
+          <p class="text-lg mb-8">
+          We work with both domestic and commercial customers, providing dependable lawn mowing, hedge trimming, weeding, and seasonal garden tidy-ups. Much of our work comes from repeat customers and recommendations, making us a trusted first choice for local garden care.
+          </p>
+          
+          <div class="space-y-8 mb-8">          
+            <div class="flex items-start">
+              <div class="flex-shrink-0 mt-1">
+                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-xl font-bold mb-1">Email Us</h3>
+                <p class="text-gray-700">
+                  <a href="mailto:info@greengardenersussex.com" class="hover:text-green-800">
+                    info@greengardenersussex.com
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+
+        <!-- Contact Form -->
+        <Form>
+        
+        
+      </div>
+    </div>
+  </section>
+
+  </BaseLayout>

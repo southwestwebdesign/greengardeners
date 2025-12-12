@@ -1,0 +1,31 @@
+{
+  "name": "maucariapacom-church-starter",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "convert:webp:src": "find ./src -type f \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" \\) -exec sh -c 'for img; do cwebp -q 80 \"$img\" -o \"${img%.*}.webp\"; done' sh {} +",
+    "convert:webp:uploads": "find ./public/uploads -type f \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" \\) -exec sh -c 'for img; do cwebp -q 80 \"$img\" -o \"${img%.*}.webp\"; done' sh {} +",
+    "convert:webp": "npm run convert:webp:src && npm run convert:webp:uploads",
+    "delete:jpg:src": "find ./src -type f \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" \\) -delete",
+    "delete:jpg:uploads": "find ./public/uploads -type f \\( -iname \"*.jpg\" -o -iname \"*.jpeg\" \\) -delete",
+    "delete:jpg": "npm run delete:jpg:src && npm run delete:jpg:uploads"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.4.2",
+    "@astrojs/tailwind": "^6.0.2",
+    "@fortawesome/fontawesome-free": "^7.0.0",
+    "@vercel/analytics": "^1.5.0",
+    "astro": "^5.12.8",
+    "date-fns": "^3.3.1",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "postcss-font-display": "^0.3.0"
+  }
+}

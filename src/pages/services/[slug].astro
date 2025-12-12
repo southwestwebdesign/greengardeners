@@ -1,0 +1,100 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/Sections/PageHeader.astro";
+import Button from "../../components/UI/Button.astro";
+import { getCollection } from "astro:content";
+import Form from "../../components/Global/Form.astro";
+import Certificates from "../../components/Global/Certificates.astro";
+import IconList from '../../components/Sections/IconList.astro';
+import ServiceExtras from "../../components/ServiceExtras.astro";
+import RedCTA from "../../components/RedCTA.astro";
+
+// Generate static paths for all services
+export async function getStaticPaths() {
+  try {
+    const serviceEntries = await getCollection("services", ({ data }) => {
+      return import.meta.env.PROD ? !data.draft : true;
+    });
+
+    return serviceEntries.map(entry => ({
+      params: { slug: entry.slug },
+      props: { entry },
+    }));
+  } catch (error) {
+    // If the collection doesn't exist yet, return an empty array
+    return [];
+  }
+}
+
+// Get the service data
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const hasExtras = (entry.data.extrablock1title && entry.data.extrablock1content) || (entry.data.extrablock2title && entry.data.extrablock2content);
+
+const services = [
+  "Sussex The Green Gardeners",
+  "Lawn Mowing",
+  "Hedge Trimming",
+  "Leaf Clearing",
+  "Weeding"
+];
+---
+
+<BaseLayout
+  title={`${entry.data.name} - Heathfield, East Sussex The Green Gardeners`}
+  description={entry.data.descriptionSeo || entry.data.summary}
+  image={entry.data.logo ? { url: entry.data.logo, alt: entry.data.name } : undefined}
+>
+  <PageHeader 
+    title={entry.data.name} 
+    backgroundImage={entry.data.logo}
+    displaybackgroundImage={entry.data.logo ? true : false}
+  />
+  
+  <section class="py-16">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <IconList items={services} className="mx-auto pb-0" />
+          <h2 class="my-4">{entry.data.h2title}</h2>
+          
+          <div class="prose prose-lg max-w-none prose-headings:text-gray-900 prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900">
+            <Content / class="mb-6" />
+          </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div>
+          <div class="sticky top-24">
+            {
+              entry.data.logo && (
+                <div class="mb-6 flex justify-center">
+                  <img 
+                    src={entry.data.logo} 
+                    alt={entry.data.name}
+                    loading="lazy" 
+                    class="w-full w-auto object-cover rounded-lg shadow hover:opacity-75"
+                  />
+                </div>
+              )
+            }
+            
+            <Form />
+            
+            <div class="flex flex-col space-y-3 mt-3">
+              <Button href="/contact/" variant="primary">
+                Get A Free Quote
+              </Button>
+              
+              <Button href="/services/" variant="outline">
+                Back to all services
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  { hasExtras ? <ServiceExtras data={entry.data}/> : <RedCTA/> }
+</BaseLayout>

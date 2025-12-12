@@ -1,0 +1,163 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image?: {
+    url: string;
+    alt: string;
+  };
+  type?: "website" | "article" | "service" | "auto" | "collection"; // "auto" detects based on URL
+  canonicalUrl?: string;
+}
+
+const {
+  title = "Sussex The Green Gardeners Experts | The Green Gardeners",
+  description = "Sussex The Green Gardeners Experts, specialising in water supply pipe repairs, water supply pipe replacement, lead pipe replacements, drainage installation, common supply work, leak detection. Bedfordshire, London",
+  image = {
+    url: "/uploads/external-moling-experts-repair-emergency-brennan-moling-london.png",
+    alt: "External Moling Experts - Water Pipe Repair - The Green Gardeners",
+  },
+  type = "auto",
+  canonicalUrl,
+} = Astro.props;
+
+// Canonical
+const canonicalURL = canonicalUrl || new URL(Astro.url.pathname, Astro.site);
+
+// Business info
+const businessInfo = {
+  name: "The Green Gardeners",
+  url: "https://www.greengardenersussex.com",
+  telephone: "+44 7774 887575",
+  email: "info@greengardenersussex.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Hertfordshire",
+    addressCountry: "UK"
+  }
+};
+
+// Detect if page is a service detail page (not just /services/)
+// Detect page type automatically
+let pageType = type;
+let serviceName: string | null = null;
+
+if (type === "auto") {
+  if (Astro.url.pathname === "/services/") {
+    pageType = "collection"; // overview page
+  } else if (Astro.url.pathname.startsWith("/services/")) {
+    pageType = "service"; // detail page
+    serviceName = Astro.url.pathname
+      .replace("/services/", "")
+      .replace(/-/g, " ")
+      .replace(/\/$/, "")
+      .replace(/\b\w/g, c => c.toUpperCase()); // Capitalise words
+  }
+}
+---
+
+<!-- Basic SEO -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={pageType} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(image.url, Astro.site)} />
+<meta property="og:image:alt" content={image.alt} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={new URL(image.url, Astro.site)} />
+<meta property="twitter:image:alt" content={image.alt} />
+
+<!-- Local Business JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Plumber",
+  "name": "The Green Gardeners",
+  "url": "https://www.greengardenersussex.com",
+  "telephone": "+447774887575",
+  "email": "info@greengardenersussex.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Hertfordshire",
+    "addressCountry": "UK"
+  },
+  "image": "{new URL(image.url, Astro.site)}",
+  "description": "{description}"
+}
+</script>
+
+<!-- Article Schema -->
+{pageType === "article" && (
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "image": "{new URL(image.url, Astro.site)}",
+    "description": description,
+    "publisher": {
+      "@type": "Organization",
+      "name": "{businessInfo.name}",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{new URL("/uploads/logo.png", Astro.site)}"
+      }
+    },
+    "url": "{canonicalURL}",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{canonicalURL}"
+    }
+  }}
+  </script>
+)}
+
+<!-- Service Schema (auto-detected for /services/ pages) -->
+{pageType === "service" && serviceName && (
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "{serviceName}",
+    "provider": {
+      "@type": "Plumber",
+      "name": "{businessInfo.name}",
+      "url": "{businessInfo.url}",
+      "telephone": "{businessInfo.telephone}",
+      "address": {businessInfo.address}
+    },
+    "description": "{description}",
+    "areaServed": {
+      "@type": "Place",
+      "name": "Hertfordshire, Bedfordshire, London"
+    }
+  }}
+  </script>
+)}
+
+<!-- CollectionPage Schema (for /services/ overview) -->
+{pageType === "collection" && (
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Our Services | The Green Gardeners",
+    "description": description,
+    "url": "{canonicalURL}",
+    "about": {
+      "@type": "Plumber",
+      "name": "{businessInfo.name}"
+    }
+  }}
+  </script>
+)}

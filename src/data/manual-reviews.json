@@ -1,0 +1,54 @@
+{
+  "rating": 4.9,
+  "total": 140,
+  "reviews": [
+    {
+      "author": "John Smith",
+      "rating": 5,
+      "text": "The Green Gardeners did a fantastic job replacing our water main. Very professional and tidy work.",
+      "time": 1722048000000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=JS&background=0D8ABC&color=fff",
+      "relativeTime": "1 week ago"
+    },
+    {
+      "author": "Sarah Johnson",
+      "rating": 5,
+      "text": "Excellent service. They came quickly when we had an emergency leak and fixed it with minimal disruption.",
+      "time": 1721443200000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=SJ&background=2E8B57&color=fff",
+      "relativeTime": "2 weeks ago"
+    },
+    {
+      "author": "Michael Thompson",
+      "rating": 5,
+      "text": "Great job replacing our lead pipe. The team was professional, fast and left everything clean. Would highly recommend!",
+      "time": 1720838400000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=MT&background=800000&color=fff",
+      "relativeTime": "3 weeks ago"
+    },
+    {
+      "author": "Emma Wilson",
+      "rating": 4,
+      "text": "Very pleased with the pipe repair service. They explained everything clearly and completed the job quickly.",
+      "time": 1720233600000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=EW&background=6A5ACD&color=fff",
+      "relativeTime": "1 month ago"
+    },
+    {
+      "author": "David Brown",
+      "rating": 5,
+      "text": "The Green Gardeners sorted our water pressure issues within a day. Professional service from start to finish.",
+      "time": 1719628800000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=DB&background=FF8C00&color=fff",
+      "relativeTime": "1 month ago"
+    },
+    {
+      "author": "Jennifer Taylor",
+      "rating": 5,
+      "text": "Had a complex water main issue that other companies couldn't solve. The Green Gardeners diagnosed and fixed it in one visit. Impressive!",
+      "time": 1719024000000,
+      "profilePhoto": "https://ui-avatars.com/api/?name=JT&background=9932CC&color=fff",
+      "relativeTime": "1 month ago"
+    }
+  ]
+}

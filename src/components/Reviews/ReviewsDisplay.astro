@@ -1,0 +1,118 @@
+---
+// ReviewsDisplay.astro
+interface Review {
+  author: string;
+  rating: number;
+  text: string;
+  time: number;
+  profilePhoto?: string;
+  relativeTime: string;
+}
+
+interface Props {
+  reviews: Review[];
+  rating: number;
+  total: number;
+  showMessage?: string;
+  reviewsPerPage?: number;
+}
+
+const { 
+  reviews, 
+  rating, 
+  total,
+  showMessage,
+  reviewsPerPage = 6 // Show 6 reviews by default
+} = Astro.props;
+
+// Limit the number of reviews shown initially for better performance
+const displayedReviews = reviews.slice(0, reviewsPerPage);
+const hasMoreReviews = reviews.length > reviewsPerPage;
+
+// Function to generate star rating HTML
+function getStarRating(rating: number) {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
+  return Array(fullStars).fill('★').join('') +
+         (hasHalfStar ? '½' : '') +
+         Array(emptyStars).fill('☆').join('');
+}
+---
+
+<div class="reviews-container my-12">
+  <div class="text-center mb-8">
+    <a 
+      href="https://g.page/r/CevuH6bLV8UYEBM/review" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="inline-block mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full transition-colors duration-300"
+    >
+      Write a Review
+    </a>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+    {displayedReviews.length > 0 ? (
+      displayedReviews.map((review) => (
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+          <div class="flex items-center mb-4">
+            {review.profilePhoto ? (
+              <img 
+                src={review.profilePhoto} 
+                alt={`${review.author}'s profile`}
+                class="w-12 h-12 rounded-full mr-4 object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center mr-4">
+                {review.author.split(' ').map(name => name[0]).join('').substring(0, 2)}
+              </div>
+            )}
+            
+            <div>
+              <h4 class="font-bold text-gray-900">{review.author}</h4>
+              <p class="text-sm text-gray-500">{review.relativeTime}</p>
+            </div>
+          </div>
+          
+          <div class="text-amber-500 mb-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span class={i < review.rating ? "text-amber-500" : "text-gray-300"}>★</span>
+            ))}
+          </div>
+          
+          <p class="text-gray-700">{review.text}</p>
+        </div>
+      ))
+    ) : (
+      <div class="col-span-3 text-center py-12">
+        <div class="text-gray-400 mb-4 text-5xl">⭐</div>
+        <p class="text-xl text-gray-600 mb-3">No reviews available at the moment</p>
+        <p class="text-gray-500">Be the first to leave a review!</p>
+      </div>
+    )}
+  </div>
+  
+  {hasMoreReviews && (
+    <div class="text-center">
+      <a 
+        href="https://g.page/r/CevuH6bLV8UYEBM/reviews" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg transition-colors duration-300"
+      >
+        View all {total} reviews on Google
+      </a>
+    </div>
+  )}
+</div>
+
+<style>
+  /* Add any additional styling here */
+  .reviews-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+</style>

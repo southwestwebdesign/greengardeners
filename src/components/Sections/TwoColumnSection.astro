@@ -1,0 +1,103 @@
+---
+export interface Props {
+  header: string;
+  content: string;
+  imageSrc: string;
+  imageAlt: string;
+  flip?: boolean;
+  displayWhyIcons?: boolean;
+  whyList?: string[];
+  iconsdisplay?: boolean;
+  icons?: string[];
+  bgClass?: string;
+}
+const {
+  header,
+  content,
+  imageSrc,
+  imageAlt,
+  displayWhyIcons = false,
+  whyList = [
+    "We Provide Qualified Plumbers",
+    "Quality Workmanship",
+    "Experienced",
+    "Reliable",
+    "Water Mains Replacement (check out our Photo Gallery)",
+    "Leak Repairs",
+    "New Water Supply",
+    "Services to Improve Water Flow",
+    "Mole Cable Ducts",
+    "Telephone Ducting",
+    "Storm & Foul Sewer Drainage",
+    "Manhole Repairs works undertaken",
+    "All Levels of Reinstatement Works",
+    "Fixed prices all work quoted",
+    "WIAPS / WATERSAFE Approved",
+    "£5m Public Liability Insurance",
+    "Always here to help"
+  ],
+  iconsdisplay = true,
+  flip = false,
+  icons = [],
+  bgClass = "bg-gray-50"
+} = Astro.props;
+import IconList2 from "./IconList2.astro";
+import CustomDivider from "../Global/CustomDivider.astro";
+---
+<section class={`py-12 ${bgClass}`}>
+  <div class="container space-y-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start items-center">
+      {flip ? (
+        <>
+          <div class="flex flex-col h-full">
+            <div>
+              <img src={imageSrc} alt={imageAlt} class="rounded-lg shadow-lg object-cover max-w-25" loading="lazy"/>
+            </div>
+          </div>
+          <div class="space-y-6">
+            {iconsdisplay && icons.length > 0 && <IconList2 items={icons} className="pb-0" />}
+            <h2 class="max-w-4xl">{header}</h2>
+            <CustomDivider />
+            <p set:html={content}></p>
+            {displayWhyIcons && (
+              <ul class="space-y-2">
+                {whyList.map(item => (
+                  <li class="flex items-center" key={item}>
+                    <i class="fas fa-check-square mr-2"></i>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <slot name="actions" />
+          </div>
+        </>
+      ) : (
+        <>
+          <div class="space-y-6">
+            {icons.length > 0 && <IconList2 items={icons} className="pb-0" />}
+            <h2 class="max-w-4xl">{header}</h2>
+            <CustomDivider />
+            <p set:html={content}></p>
+            {displayWhyIcons && (
+              <ul class="space-y-2 text-green-600">
+                {whyList.map(item => (
+                  <li class="flex items-center" key={item}>
+                    <i class="fas fa-check-square mr-2"></i>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <slot name="actions" />
+          </div>
+          <div class="flex flex-col h-full justify-center mx-auto">
+            <div class="justify-center text-center mx-auto">
+              <img src={imageSrc} alt={imageAlt} class="mx-auto rounded-lg shadow-lg object-cover" loading="lazy"/>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+</section>

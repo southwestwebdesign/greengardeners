@@ -1,0 +1,60 @@
+---
+export interface Props {
+  location?: string;
+  locations?: string[];
+}
+const { 
+  location = "Hertfordshire", 
+  locations = [
+    "Hertford",
+    "Bedford",
+    "Stevenage",
+    "Luton",
+    "Hitchin",
+    "Hatfield",
+    "Hemel Hempstead",
+    "St Albans",
+    "Watford",
+    "Harrow",
+    "Harpenden",
+    "Cheshunt",
+    "Wembley",
+    "Enfield",
+    "Bishop's Stortford",
+    "Ware",
+    "London",
+    "Berkhamstead",
+    "Dunstable",
+    "Leighton Buzzard"
+  ] 
+} = Astro.props;
+---
+<section class="py-16 bg-green-600 text-white">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <!-- Left Column: Text Content -->
+      <div>
+        <h3 class="text-white font-bold mb-4">
+          YOUR NO.1 CHOICE FOR WATER PIPE REPAIR, WATER PIPE REPLACEMENT AND EXTERNAL MOLING IN {location.toUpperCase()}.
+        </h3>
+        <p class="mb-6">
+          Our wealth of combined experience in the water industry over the past 2 years, as well as our passion for delivering you the best possible workmanship, allows us to provide superior water pipe repairs and replacement services throughout {location}, Bedfordshire and the North / West London areas. Whether you are in need of an emergency plumber or you want to enquire about our external moling services, The Green Gardeners are your expert local team you need.
+        </p>
+        <a href="tel:07774887575" class="inline-block bg-white text-indigo-600 font-semibold py-2 px-4 rounded shadow hover:bg-gray-200 transition">
+          Call Us: 07774 887575
+        </a>
+      </div>
+      <!-- Right Column: Responsive Locations List -->
+      <div>
+        <div class="grid grid-cols-2 gap-4">
+          {locations.map(loc => (
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right mr-2"></i>
+              <span>{loc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

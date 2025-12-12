@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import Form from "../components/Global/Form.astro";
+import TwoButtons from "../components/Global/TwoButtons.astro";
+import RedCTA from "../components/RedCTA.astro";
+import EmergencyPlumber from "../components/EmergencyPlumber.astro";
+import IconList from '../components/Sections/IconList.astro';
+import Gallery from "../components/Gallery.astro";
+import CustomDivider from "../components/Global/CustomDivider.astro";
+
+const services = [
+  "Heathfield, East Sussex Gardeners",
+  "Lawn Mowing",
+  "Hedge Trimming",
+  "Leaf Clearing",
+  "Weeding"
+];
+---
+
+<BaseLayout
+  title="Heathfield, East Sussex Gardeners Gallery - The Green Gardeners in Heathfield, East Sussex"
+  description="Heathfield, East Sussex Gardeners Gallery - The Green Gardeners in Heathfield, East Sussex"
+>
+  <PageHeader 
+    title="Heathfield, East Sussex Gardeners Gallery" 
+    displaybackgroundImage={false}
+  />
+  
+  <!-- About Section -->
+  <section id="about-east-sussex-gardeners" class="py-12 bg-gray-50">
+  <div class="container space-y-8">
+    
+    <!-- Icon List (horizontal on md+) -->
+    <IconList items={services} className="mx-auto pb-0" />
+
+    <!-- Full-width H2 -->
+    <h2 class="max-w-4xl mx-auto text-center">
+      Take A Look At Our Heathfield, East Sussex Gardeners Gallery / Portfolio
+    </h2>
+    <CustomDivider />
+
+    <div>
+      <!-- Gallery goes here -->
+      <Gallery />
+    </div>
+
+    </div>
+  </div>
+  </section>
+
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+const { data } = Astro.props;
+const hasExtra1 = data.extrablock1title && data.extrablock1content;
+const hasExtra2 = data.extrablock2title && data.extrablock2content;
+const gridCols = hasExtra1 && hasExtra2 ? "md:grid-cols-2" : "grid-cols-1";
+---
+<section class="py-16 bg-green-600 text-white">
+  <div class="container">
+    { (hasExtra1 || hasExtra2) && (
+      <div class={`grid grid-cols-1 ${gridCols} gap-12`}>
+        {hasExtra1 && (
+          <div class="space-y-4">
+            <h3 class="text-white">{data.extrablock1title}</h3>
+            <p set:html={data.extrablock1content}></p>
+          </div>
+        )}
+        {hasExtra2 && (
+          <div class="space-y-4">
+            <h3 class="text-white">{data.extrablock2title}</h3>
+            <p set:html={data.extrablock2content}></p>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,58 @@
+{
+  "$ref": "#/definitions/services",
+  "definitions": {
+    "services": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string",
+          "pattern": "^\\/uploads\\/services\\/"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "summaryTitle": {
+          "type": "string"
+        },
+        "h2title": {
+          "type": "string"
+        },
+        "descriptionSeo": {
+          "type": "string"
+        },
+        "extrablock1title": {
+          "type": "string"
+        },
+        "extrablock1content": {
+          "type": "string"
+        },
+        "extrablock2title": {
+          "type": "string"
+        },
+        "extrablock2content": {
+          "type": "string"
+        },
+        "order": {
+          "type": "number"
+        },
+        "draft": {
+          "type": "boolean",
+          "default": false
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "summary",
+        "summaryTitle"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

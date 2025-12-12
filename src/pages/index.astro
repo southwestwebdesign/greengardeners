@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSection from "../components/Sections/HeroSection.astro";
+import EventList from "../components/Sections/EventList.astro";
+import SermonList from "../components/Sections/SermonList.astro";
+import Button from "../components/UI/Button.astro"; 
+import TwoButtons from "../components/Global/TwoButtons.astro";
+import IconList from '../components/Sections/IconList.astro';
+import IconList2 from '../components/Sections/IconList2.astro';
+import TwoColumnSection from "../components/Sections/TwoColumnSection.astro";
+import GlobalCTA from "../components/Sections/GlobalCTA.astro";
+import Certificates from "../components/Global/Certificates.astro";
+import CustomDivider from "../components/Global/CustomDivider.astro";
+
+const services = [
+  "All garden works undertaken",
+  "Lawn mowing",
+  "Hedge trimming",
+  "Leaf clearing",
+  "Weeding"
+];
+
+const section1icons = [
+  "Lawn Care",
+  "Hedge Maintenance",
+  "Leaf & Debris Clearance",
+  "Garden Tidy",
+  "Weeding & Borders"
+];
+
+const section2icons = [
+  "Seasonal Lawn Mowing",
+  "Hedge Shaping",
+  "Leaf Removal",
+  "Weed Control",
+  "General Garden Maintenance"
+];
+---
+
+<BaseLayout>
+  <HeroSection 
+    title="Garden Maintenance Services in Heathfield, East Sussex - The Green Gardeners"
+    subtitle="Reliable lawn mowing, hedge trimming, leaf clearing and weeding services for homes and businesses across Heathfield, East Sussex."
+    backgroundImage="/uploads/images/garden-bg.jpg"
+    ctaText="Our Services"
+    ctaLink="/services/"
+    secondaryCtaText="Contact Us"
+    secondaryCtaLink="/contact/"
+  />
+  
+  <!-- About Section -->
+  <section id="about-green-gardeners" class="py-12 bg-gray-50">
+  <div class="container space-y-8">
+    
+    <!-- Icon List (horizontal on md+) -->
+    <IconList items={services} className="mx-auto pb-0" />
+
+    <!-- Full-width H2 -->
+    <h2 class="max-w-4xl mx-auto text-center">
+      Welcome to The Green Gardeners — Garden and Maintenance services across Heathfield, East Sussex
+    </h2>
+
+    <CustomDivider />
+
+    <!-- Two Column Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <!-- Left Column -->
+      <div>
+        <p class="mb-6">
+          The Green Gardeners provide reliable, professional garden maintenance for domestic and commercial properties across Heathfield, East Sussex. Our experienced team deliver tidy, healthy gardens year-round with scheduled maintenance plans or one-off visits.
+        </p>
+        <p class="mb-6">
+          We use modern equipment and follow good horticultural practice to encourage strong lawns, well-shaped hedges and clean, debris-free paths and patios. All work is insured and performed with care for your plants and property.
+        </p>
+      </div>
+
+      <!-- Right Column -->
+      <div class="flex flex-col h-full">
+        <div>
+          <p class="mb-4"><strong>Lawn mowing:</strong> Regular mowing with edging, clippings removed or mulched, and seasonal height adjustments. Optional lawn care add-ons: scarifying, aeration and turf repair to improve appearance and health.</p>
+          <p class="mb-4"><strong>Hedge trimming:</strong> Professional pruning and shaping for formal and informal hedges. We remove excess growth, promote healthy structure and dispose of arisings responsibly.</p>
+          <p class="mb-4"><strong>Leaf clearing:</strong> Autumn and year-round leaf clearance from lawns, beds and paved areas. We can offer one-off leaf clearance or regular autumn maintenance to prevent smothering and moss build-up.</p>
+          <p class="mb-4"><strong>Weeding:</strong> Hand weeding of borders and beds, weed removal from paving, and targeted treatment plans to reduce re-growth. We take care around desirable planting and use appropriate methods for long-term control.</p>
+          <p class="mb-4"><strong>All garden works undertaken:</strong> Planting, pruning, patio and path cleaning, garden clearances, seasonal tidy-ups and bespoke one-off projects.</p>
+          <p class="mb-4"><strong>Tell us your requirements and we’ll provide a clear quote.</strong></p>
+        </div>
+        <TwoButtons/>
+      </div>
+
+      
+
+    </div>
+
+    
+
+  </div>
+  </section>
+  
+</BaseLayout>
+
+

@@ -1,0 +1,240 @@
+---
+// Import images directly using Astro's import.meta.glob
+// This will ensure they're properly processed and available in the build
+const imageModules = import.meta.glob('/src/uploads/gallery/**/*.{jpg,jpeg,png,webp}', { import: 'default' });
+
+// Define interfaces for type safety
+interface GalleryImage {
+  src: string | any;  // Can be string or complex object
+  srcPath: string;
+  alt: string;
+}
+
+// Create an array of all images with their paths
+const allImages = await Promise.all(
+  Object.entries(imageModules).map(async ([path, importFn]) => {
+    try {
+      // Load the image
+      const src = await importFn();
+      // Extract filename for alt text
+      const filename = path.split('/').pop() || '';
+      console.log("Image path:", path, "Loaded src:", typeof src, src);
+      
+      return {
+        src: src, // Keep as is, might be an object
+        srcPath: path, // Keep the original path for sorting
+        alt: getAltTextFromPath(filename)
+      } as GalleryImage;
+    } catch (error) {
+      console.error("Error loading image:", path, error);
+      return null;
+    }
+  })
+).then(results => results.filter(Boolean) as GalleryImage[]); // Remove any null entries
+
+// Log the first image for debugging
+if (allImages.length > 0) {
+  console.log("First image object:", allImages[0]);
+  console.log("Total images found:", allImages.length);
+}
+
+// Helper function to safely extract image source
+function getImageSrc(img: GalleryImage): string {
+  if (typeof img.src === 'string') {
+    return img.src;
+  }
+  if (img.src && typeof img.src === 'object') {
+    if ('src' in img.src) return img.src.src as string;
+    if ('default' in img.src) return img.src.default as string;
+  }
+  return `/placeholder.jpg`;
+}
+
+// Sort images (newest first, assuming filenames have dates or are sortable)
+const sortedImages = [...allImages].sort((a, b) => {
+  // Use the original path for sorting instead of the processed src
+  const fileA = a.srcPath.split('/').pop() || '';
+  const fileB = b.srcPath.split('/').pop() || '';
+  return fileB.localeCompare(fileA); // Reverse alphabetical order
+});
+
+// Only load the first 12 images initially (or all if fewer than 12)
+const initialImageCount = Math.min(12, sortedImages.length);
+const initialImages = sortedImages.slice(0, initialImageCount);
+const remainingImages = sortedImages.length - initialImageCount;
+
+// Function to get alt text from filename
+function getAltText(path: string): string {
+  const name = path.split('/').pop()?.split('.')[0] || '';
+  return name.replace(/[-_]/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+}
+
+// Helper function for path-based alt text
+function getAltTextFromPath(filePath: string): string {
+  const name = filePath.split('/').pop()?.split('.')[0] || '';
+  return name.replace(/[-_]/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+}
+---
+<style>
+  .lightbox-overlay {
+    transition: opacity 0.3s ease;
+  }
+  
+  .load-more-button {
+    transition: all 0.3s ease;
+  }
+  
+  .load-more-button:hover {
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="gallery grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+  {initialImages.map((image, index) => {
+    // Use our helper function to get the image src
+    const imgSrc = getImageSrc(image);
+    
+    return (
+      <figure class="gallery-item group relative">
+        <a href={imgSrc} class="gallery-link" data-index={index} rel="noopener noreferrer">
+          <img 
+            src={imgSrc}
+            alt={image.alt || ''}
+            loading="lazy"
+            class="w-full h-48 object-cover rounded-lg shadow hover:opacity-75 gallery-img"
+          />
+        </a>
+      </figure>
+    );
+  })}
+</div>
+
+{remainingImages > 0 && (
+  <div class="text-center mt-8 mb-12">
+    <button
+      id="load-more-btn"
+      class="load-more-button bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md"
+      data-total={sortedImages.length}
+      data-loaded={initialImageCount}
+    >
+      Load More Images ({remainingImages} remaining)
+    </button>
+  </div>
+)}
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 lightbox-overlay hidden z-50">
+  <button class="absolute top-4 right-4 text-white text-2xl" id="close-lightbox">&times;</button>
+  <img id="lightbox-img" class="max-w-full max-h-[90vh] object-contain" />
+</div>
+
+<script define:vars={{sortedImagesProcessed: sortedImages.map(img => ({src: getImageSrc(img), alt: img.alt})), initialImageCount}}>
+  // Store all image data for lazy loading
+  const allImages = sortedImagesProcessed;
+  let loadedCount = initialImageCount;
+  const batchSize = 8; // How many images to load each time
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const gallery = document.querySelector('.gallery');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const closeBtn = document.getElementById('close-lightbox');
+    
+    // Initial load of visible images
+    initializeVisibleImages();
+    
+    // Load more button functionality
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', loadMoreImages);
+    }
+    
+    // Lightbox functionality
+    gallery?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const link = e.target.closest('.gallery-link');
+      if (link) {
+        const img = link.querySelector('img');
+        if (img) {
+          // Make sure we're using the full URL
+          lightboxImg.src = img.src;
+          // Optionally set alt text
+          lightboxImg.alt = img.alt || '';
+          // Show the lightbox
+          lightbox.classList.remove('hidden');
+        }
+      }
+    });
+    
+    // Close lightbox when clicking on it or the close button
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+    
+    closeBtn?.addEventListener('click', closeLightbox);
+    
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lightbox?.classList.contains('hidden')) {
+        closeLightbox();
+      }
+    });
+    
+    function closeLightbox() {
+      lightbox.classList.add('hidden');
+    }
+    
+    // Initialize visible images when page loads - we don't need this anymore as images load directly
+    function initializeVisibleImages() {
+      // Images are already loaded with src attribute
+      console.log('Initial images loaded:', loadedCount);
+    }
+    
+    // Load more images when button is clicked
+    function loadMoreImages() {
+      if (loadedCount >= allImages.length) {
+        return;
+      }
+      
+      const nextBatch = allImages.slice(loadedCount, loadedCount + batchSize);
+      loadedCount += nextBatch.length;
+      
+      // Create and append new image elements
+      nextBatch.forEach((image, index) => {
+        const figure = document.createElement('figure');
+        figure.className = 'gallery-item group relative';
+        
+        const link = document.createElement('a');
+        link.href = image.src; // Already processed in the server component
+        link.className = 'gallery-link';
+        link.dataset.index = String(loadedCount - nextBatch.length + index);
+        link.setAttribute('rel', 'noopener noreferrer');
+        
+        const img = document.createElement('img');
+        img.src = image.src; // Already processed in the server component
+        img.alt = image.alt || '';
+        img.loading = 'lazy';
+        img.className = 'w-full h-48 object-cover rounded-lg shadow hover:opacity-75 gallery-img';
+        
+        link.appendChild(img);
+        figure.appendChild(link);
+        gallery.appendChild(figure);
+      });
+      
+      // Update button text or hide if all images are loaded
+      const remaining = allImages.length - loadedCount;
+      if (remaining <= 0) {
+        loadMoreBtn.style.display = 'none';
+      } else {
+        loadMoreBtn.textContent = `Load More Images (${remaining} remaining)`;
+      }
+    }
+    
+    // Helper to format image count
+    function formatImageCount(count) {
+      return count > 1 ? `${count} Images` : `${count} Image`;
+    }
+  });
+</script>

@@ -1,0 +1,52 @@
+---
+import Button from "../UI/Button.astro";
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  backgroundImage?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+}
+
+var sub: string | string = "Reliable lawn mowing, hedge trimming, leaf clearing and weeding services for homes and businesses across Heathfield, East Sussex.";
+
+const {
+  title = "Heathfield, East Sussex Gardeners - The Green Gardeners in Heathfield, East Sussex",
+  subtitle = {sub},
+  backgroundImage = "/uploads/images/garden-bg.jpg",
+  ctaText = "Plan Your Visit",
+  ctaLink = "/im-new",
+  secondaryCtaText = "Watch Sermons",
+  secondaryCtaLink = "/sermons",
+} = Astro.props;
+---
+
+<section
+  class="relative min-h-[70vh] flex items-center bg-cover py-50"
+  style={`background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${backgroundImage}); background-position: center 20%;`}
+>
+
+  <div class="container max-w-100 py-16">
+    <div class="max-w-4xl mx-auto text-white text-center justify-center">
+      <div class="flex flex-wrap gap-4 text-center justify-center">
+        <img src="/uploads/greengardenersussex.jpg" alt="The Green Gardeners - Sussex The Green Gardeners - white logo" class="h-40 mb-6 justify-center text-center" />
+      </div>
+      
+      <h1 class="font-bold mb-4 text-white">{title}</h1>
+      <p class="mb-8">{sub}</p>
+      
+      <div class="flex flex-wrap gap-4 text-center justify-center">
+        <Button href={ctaLink} variant="primary" size="md">
+          {ctaText}
+        </Button>
+        
+        <Button href={secondaryCtaLink} variant="outline" size="md" class="bg-white/10 text-white border-white hover:bg-white hover:text-gray-900 backdrop-blur-sm">
+          {secondaryCtaText}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

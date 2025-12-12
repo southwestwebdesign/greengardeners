@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/Sections/PageHeader.astro";
+import { getCollection } from "astro:content";
+
+// Fetch all services
+const all = await getCollection("services", ({ data }) =>
+  import.meta.env.PROD ? !data.draft : true
+);
+// Sort by order or name
+const services = all.sort((a, b) =>
+  (a.data.order ?? 0) - (b.data.order ?? 0) ||
+  a.data.name.localeCompare(b.data.name)
+);
+---
+
+<BaseLayout title="Garden Maintenance Services in Heathfield, East Sussex - The Green Gardeners" description="View our list of garden maintenance services in Heathfield, East Sussex. We specialize in lawn mowing, hedge trimming, leaf clearing and weeding. Contact us for a free quote!">
+  <PageHeader
+    title="Our Services"
+    subtitle="View some of our list of garden maintenance services in Heathfield, East Sussex."
+    backgroundImage="/uploads/services-header-bg.webp"
+  />
+
+  <!-- services Grid -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map(m => (
+        <a
+          href={`/services/${m.slug}/`}
+          class="
+          bg-white shadow 
+          flex flex-col overflow-hidden 
+          hover:shadow-lg rounded transition
+          min-h-[370px] border-b-4 border-green-500
+          "
+        >
+            <!-- gambar fixed height 200px -->
+            {m.data.logo && (
+              <div class="w-full h-[300px] overflow-hidden">
+                <img
+                  src={m.data.logo}
+                  loading="lazy"
+                  alt={m.data.summaryTitle || m.data.name}
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            <div class="p-4 flex flex-col flex-1 justify-between text-center">
+              <div>
+                <h3 class="text-2xl font-bold mb-2 text-green-500">{m.data.summaryTitle}</h3>
+                <p class="text-gray-700 text-base">{m.data.summary}</p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
